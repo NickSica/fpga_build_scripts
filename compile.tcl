@@ -6,17 +6,17 @@ proc getArgs {args} {
 	array set opts {partNum {} outDir build top {} constrFile boards/V707/constraints.xdc lang verilog srcDir rtl}
 	while {[llength $args]} {
 		switch -glob -- [lindex $args 0] {
-			-part*   {set args [lassign $args - $opts(partNum)]}
-			-out*    {set args [lassign $args - $opts(outDir)]}
-			-top*    {set args [lassign $args - $opts(top)]}
-			-constr* {set args [lassign $args - $opts(constrFile)]}
-			-lang*   {set args [lassign $args - $opts(lang)]}
-			-src*    {set args [lassign $args - $opts(srcDir)]}
+			-part*   {set args [lassign $args - opts(partNum)]}
+			-out*    {set args [lassign $args - opts(outDir)]}
+			-top*    {set args [lassign $args - opts(top)]}
+			-constr* {set args [lassign $args - opts(constrFile)]}
+			-lang*   {set args [lassign $args - opts(lang)]}
+			-src*    {set args [lassign $args - opts(srcDir)]}
 			default  break
 		}
 	}
-	#puts "opts: [array get opts]"
-	#puts "other args: $args"
+	puts "opts: [array get opts]"
+	puts "other args: $args"
 }
 
 getArgs {*}$argv
@@ -30,11 +30,11 @@ if {$opts(lang) != "verilog" && $opts(lang) != "vhdl" && $opts(lang) != "mixed"}
 }
 
 if {$opts(lang) == "verilog" || $opts(lang) == "mixed"} {
-	read_verilog -sv [ glob $opts(srcDir)/*.sv ]
+	read_verilog -sv [ glob $opts(srcDir)/*.{sv,v} ]
 }
 
 if {$opts(lang) == "vhdl"} {
-	read_vhdl [ glob ./src/*.vhd ]
+	read_vhdl [ glob $opts(srcDir)/*.vhd ]
 }
 
 read_xdc $opts(constrFile)
